@@ -2,7 +2,7 @@
 
 Basic command and command handler infrastructure using Autofac.
 
-    using AutoFace;
+    using AutoFac;
     using NCore.Base.Commands;
 
     var builder = new ContainerBuilder();
