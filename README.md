@@ -2,6 +2,22 @@
 
 Basic command and command handler infrastructure using Autofac.
 
+    using AutoFace;
+    using NCore.Base.Commands;
+
+    var builder = new ContainerBuilder();
+    builder.RegisterType<BarCommandHandler>().AsImplementedInterfaces().SingleInstance();
+    builder.RegisterType<FooCommandHandler>().AsImplementedInterfaces().SingleInstance();
+    var container = builder.Build();
+
+    var service = new CommandService(container);
+
+    service.Execute<FooCommand>();
+    service.Execute(new FooCommand() { ... });
+
+    var result = await service.Execute<BarCommand, BarResult>();
+    var result = await service.Execute<BarCommand, BarResult>(new BarCommand() { ... });
+
 # Installing
 
     npm install --save shadowmint/ncore-base-commands
