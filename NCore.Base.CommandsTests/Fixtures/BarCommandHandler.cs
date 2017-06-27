@@ -6,12 +6,11 @@ namespace NCore.Base.CommandsTests.Fixtures
 {
   public class BarCommandHandler : ICommandHandler<BarCommand, BarResult>
   {
-    public Task<BarResult> Execute(ICommand command)
+    public Task<BarResult> Execute(BarCommand command)
     {
-      var c = command as BarCommand;
       return Task.FromResult(new BarResult()
       {
-        Result = c.Value + 1
+        Result = command.Value + 1
       });
     }
   }
