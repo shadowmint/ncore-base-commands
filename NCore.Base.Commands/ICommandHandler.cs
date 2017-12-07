@@ -2,12 +2,16 @@ using System.Threading.Tasks;
 
 namespace NCore.Base.Commands
 {
-  public interface ICommandHandler<in T> where T : ICommand
+  public interface ICommandHandler
+  {
+  }
+
+  public interface ICommandHandler<in T> : ICommandHandler where T : ICommand
   {
     Task Execute(T command);
   }
 
-  public interface ICommandHandler<in T, TResult> where T : ICommand
+  public interface ICommandHandler<in T, TResult> : ICommandHandler where T : ICommand
   {
     Task<TResult> Execute(T command);
   }

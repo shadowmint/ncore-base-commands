@@ -1,6 +1,6 @@
 {
   "name": "NCore.Base.Commands",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Command dispatch helpers using Autofac",
   "main": "index.js",
   "files": [
@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "test": "dotnet build /t:restore && dotnet test ./NCore.Base.CommandsTests/NCore.Base.CommandsTests.csproj",
-    "build": "dotnet clean && dotnet build /t:restore && dotnet pack --include-symbols --include-source && rm -f lib/*.nupkg && find NCore.Base.Commands/* -name *.nupkg -exec cp {} lib \\;",
+    "build": "dotnet clean && dotnet build && dotnet pack --include-symbols --include-source && rm -f lib/*.nupkg && find NCore.Base.Commands/* -name *.nupkg | xargs -I files cp files lib",
     "demo": "cd NCore.Base.CommandsDemo && dotnet run",
     "postinstall": "node scripts/postinstall.js"
   },

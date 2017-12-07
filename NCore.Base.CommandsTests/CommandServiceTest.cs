@@ -1,6 +1,7 @@
 using System;
 using Autofac;
 using NCore.Base.Commands;
+using NCore.Base.Commands.Conventions;
 using NCore.Base.CommandsTests.Fixtures;
 using Xunit;
 
@@ -11,8 +12,7 @@ namespace NCore.Base.CommandsTests
     private IContainer Fixture()
     {
       var builder = new ContainerBuilder();
-      builder.RegisterType<BarCommandHandler>().AsImplementedInterfaces().SingleInstance();
-      builder.RegisterType<FooCommandHandler>().AsImplementedInterfaces().SingleInstance();
+      new ServiceLocator().RegisterAllByConvention(builder);
       return builder.Build();
     }
 
@@ -43,7 +43,7 @@ namespace NCore.Base.CommandsTests
       var service = new CommandService(Fixture());
       Assert.Throws<CommandFailedException>(() => { service.Execute<NotImplCommand>().Wait(); });
     }
-    
+
     [Fact]
     public void CantExecuteCommandForUnboundResponseType()
     {
