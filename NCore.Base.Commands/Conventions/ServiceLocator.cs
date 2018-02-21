@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 using Autofac;
 using Autofac.Core;
@@ -10,6 +11,11 @@ namespace NCore.Base.Commands.Conventions
     private readonly ClassLocator _classLocator;
 
     public ServiceLocator(string assemblyMatchRegex = ".*")
+    {
+      _classLocator = new ClassLocator(new[] {"^NCore\\.Base\\.Commands$", assemblyMatchRegex});
+    }
+
+    public ServiceLocator(IEnumerable<string> assemblyMatchRegex)
     {
       _classLocator = new ClassLocator(assemblyMatchRegex);
     }

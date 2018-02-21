@@ -1,17 +1,25 @@
 using System;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Autofac;
-using Autofac.Core;
 using Autofac.Core.Registration;
+using NCore.Base.Commands.Conventions;
 
 namespace NCore.Base.Commands
 {
-  public class CommandService
+  public class CommandService : ICommandService, ISingleton
   {
-    private readonly IContainer _container;
+    private IContainer _container;
+
+    public CommandService()
+    {
+    }
 
     public CommandService(IContainer container)
+    {
+      _container = container;
+    }
+
+    private void Initialize(IContainer container)
     {
       _container = container;
     }
@@ -23,6 +31,7 @@ namespace NCore.Base.Commands
 
     public Task Execute<T>(T command) where T : ICommand
     {
+      GuardContainerNotNull();
       try
       {
         var resolver = _container.Resolve<ICommandHandler<T>>();
@@ -32,6 +41,7 @@ namespace NCore.Base.Commands
       {
         ThrowCommandFailed(error);
       }
+
       return default(Task);
     }
 
@@ -42,6 +52,7 @@ namespace NCore.Base.Commands
 
     public async Task<TResult> Execute<T, TResult>(T command) where T : ICommand
     {
+      GuardContainerNotNull();
       try
       {
         var resolver = _container.Resolve<ICommandHandler<T, TResult>>();
@@ -51,12 +62,34 @@ namespace NCore.Base.Commands
       {
         ThrowCommandFailed(error);
       }
+
       return default(TResult);
     }
 
     private static void ThrowCommandFailed(Exception error)
     {
       throw new CommandFailedException("Error executing command", error);
+    }
+
+    private void GuardContainerNotNull()
+    {
+      if (_container == null)
+      {
+        ThrowCommandFailed(new Exception("Error executing command: CommandService not initialized"));
+      }
+    }
+
+    public static void RegisterSingleton(IContainer container)
+    {
+      try
+      {
+        var service = container.Resolve<ICommandService>() as CommandService;
+        service?.Initialize(container);
+      }
+      catch (ComponentNotRegisteredException err)
+      {
+        // Probably a regex or regex set that did not include NCore.Base.Commands
+      }
     }
   }
 }

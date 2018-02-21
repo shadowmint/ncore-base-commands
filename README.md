@@ -18,6 +18,20 @@ Basic command and command handler infrastructure using Autofac.
     var result = await service.Execute<BarCommand, BarResult>();
     var result = await service.Execute<BarCommand, BarResult>(new BarCommand() { ... });
 
+To automatically collect services, use:
+
+    public class Foo : IService { ... }
+
+    var builder = new ContainerBuilder();
+    new ServiceLocator(regex).RegisterAllByConvention(builder);
+    return builder.Build();
+
+Where regex is the pattern matcher for assemblies to check.
+
+If you automatically registered services, you can also use:
+
+    var service = container.Resolve<ICommandService>();
+         
 # Installing
 
     npm install --save shadowmint/ncore-base-commands

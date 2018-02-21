@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Autofac;
 using Autofac.Core.Registration;
 using NCore.Base.Commands;
@@ -11,11 +12,22 @@ namespace NCore.Base.CommandsTests
 {
   public class ServiceLocatorTests
   {
+    private IContainer Fixture(IEnumerable<string> regex)
+    {
+      var builder = new ContainerBuilder();
+      new ServiceLocator(regex).RegisterAllByConvention(builder);
+      var container = builder.Build();
+      CommandService.RegisterSingleton(container);
+      return container;
+    }
+
     private IContainer Fixture(string regex)
     {
       var builder = new ContainerBuilder();
       new ServiceLocator(regex).RegisterAllByConvention(builder);
-      return builder.Build();
+      var container = builder.Build();
+      CommandService.RegisterSingleton(container);
+      return container;
     }
 
     [Fact]
@@ -23,6 +35,25 @@ namespace NCore.Base.CommandsTests
     {
       var container = Fixture("NCore\\.Base\\..*");
       container.Resolve<ISampleService>();
+    }
+
+    [Fact]
+    public void CanFindWithValidRegexSet()
+    {
+      var container = Fixture(new[]
+      {
+        "^NCore\\.Base\\.Commands$",
+        "^NCore\\.Base\\.CommandsTests$",
+      });
+      container.Resolve<ISampleService>();
+    }
+
+    [Fact]
+    public void CanResolveCommandHandler()
+    {
+      var container = Fixture("NCore\\.Base\\..*");
+      var commands = container.Resolve<ICommandService>();
+      commands.Execute<FooCommand>().Wait();
     }
 
     [Fact]

@@ -11,18 +11,18 @@ namespace NCore.Base.Commands.Conventions
   {
     private List<Assembly> _assemblyList;
 
-    private readonly Regex _match;
+    private readonly List<Regex> _matchers;
 
     private List<Assembly> AssemblyList => _assemblyList ?? (_assemblyList = CollectAssemblies().ToList());
 
-    public ClassLocator(string assemblyMatcherRegex = ".*")
+    public ClassLocator(IEnumerable<string> assemblyMatcherRegex)
     {
-      _match = new Regex(assemblyMatcherRegex);
+      _matchers = assemblyMatcherRegex.Select(i => new Regex(i)).ToList();
     }
 
     private IEnumerable<Assembly> CollectAssemblies()
     {
-      return AppDomain.CurrentDomain.GetAssemblies().Where(assembly => _match.IsMatch(assembly.FullName));
+      return AppDomain.CurrentDomain.GetAssemblies().Where(assembly => _matchers.Any(i => i.IsMatch(assembly.FullName)));
     }
 
     public IEnumerable<Type> Implements<T>()
