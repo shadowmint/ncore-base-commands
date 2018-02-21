@@ -28,8 +28,9 @@ To automatically collect services, use:
 
 Where regex is the pattern matcher for assemblies to check.
 
-If you automatically registered services, you can also use:
+You can resolve command service using:
 
+    CommandService.RegisterSingleton(container);
     var service = container.Resolve<ICommandService>();
          
 # Installing

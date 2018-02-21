@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -22,6 +23,7 @@ namespace NCore.Base.Commands.Conventions
 
     private IEnumerable<Assembly> CollectAssemblies()
     {
+      AppDomain.CurrentDomain.GetAssemblies().ToList().ForEach(i => Debug.WriteLine(i));
       return AppDomain.CurrentDomain.GetAssemblies().Where(assembly => _matchers.Any(i => i.IsMatch(assembly.FullName)));
     }
 
