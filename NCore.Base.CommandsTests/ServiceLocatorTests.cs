@@ -15,7 +15,7 @@ namespace NCore.Base.CommandsTests
     private IContainer Fixture(IEnumerable<string> regex)
     {
       var builder = new ContainerBuilder();
-      new ServiceLocator(regex).RegisterAllByConvention(builder);
+      new ServiceLocator(regex, true).RegisterAllByConvention(builder);
       var container = builder.Build();
       CommandService.RegisterSingleton(container);
       return container;
@@ -24,7 +24,7 @@ namespace NCore.Base.CommandsTests
     private IContainer Fixture(string regex)
     {
       var builder = new ContainerBuilder();
-      new ServiceLocator(regex).RegisterAllByConvention(builder);
+      new ServiceLocator(regex, true).RegisterAllByConvention(builder);
       var container = builder.Build();
       CommandService.RegisterSingleton(container);
       return container;
@@ -42,8 +42,8 @@ namespace NCore.Base.CommandsTests
     {
       var container = Fixture(new[]
       {
-        "^NCore\\.Base\\.Commands$",
-        "^NCore\\.Base\\.CommandsTests$",
+        "^NCore\\.Base$",
+        "^NCore\\.Base\\.Commands.*",
       });
       container.Resolve<ISampleService>();
     }

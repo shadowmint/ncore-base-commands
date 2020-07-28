@@ -1,37 +1,38 @@
 # NCore.Base.Commands
 
-Basic command and command handler infrastructure using Autofac.
+Basic command and command handler infrastructure using Autofac using conventions.
 
-    using AutoFac;
-    using NCore.Base.Commands;
+You can implement the following interfaces:
 
-    var builder = new ContainerBuilder();
-    builder.RegisterType<BarCommandHandler>().AsImplementedInterfaces().SingleInstance();
-    builder.RegisterType<FooCommandHandler>().AsImplementedInterfaces().SingleInstance();
-    var container = builder.Build();
-
-    var service = new CommandService(container);
-
-    service.Execute<FooCommand>();
-    service.Execute(new FooCommand() { ... });
-
-    var result = await service.Execute<BarCommand, BarResult>();
-    var result = await service.Execute<BarCommand, BarResult>(new BarCommand() { ... });
-
-To automatically collect services, use:
-
-    public class Foo : IService { ... }
+ - IService
+ - IConcrete
+ - ISingleton
+ - ICommandHandler<TCommand>
+ - ICommand
+ 
+To automatically register dependencies using discovery use:
 
     var builder = new ContainerBuilder();
     new ServiceLocator(regex).RegisterAllByConvention(builder);
     return builder.Build();
 
-Where regex is the pattern matcher for assemblies to check.
+You can also use the extension methods for a quickstart:
 
-You can resolve command service using:
+    class Program
+    {
+        static async Task Main(string[] args)
+        {
+            var container = new ContainerBuilder().RegisterByConvention();
 
-    CommandService.RegisterSingleton(container);
-    var service = container.Resolve<ICommandService>();
+            var foo = container.Resolve<IFooService>();
+            foo.Hi("Test");
+
+            var commandService = new CommandService(container);
+            await commandService.Execute(new FooCommand() {Name = "Test2"});
+        }
+    }
+ 
+See [Program.cs](https://github.com/shadowmint/ncore-base-commands/blob/master/NCore.Base.CommandsDemo/Program.cs) for a full example.
          
 # Installing
 

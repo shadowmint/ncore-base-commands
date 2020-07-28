@@ -86,7 +86,7 @@ namespace NCore.Base.Commands
         var service = container.Resolve<ICommandService>() as CommandService;
         service?.Initialize(container);
       }
-      catch (ComponentNotRegisteredException err)
+      catch (ComponentNotRegisteredException)
       {
         // Probably a regex or regex set that did not include NCore.Base.Commands
       }
